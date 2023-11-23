@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Tower.cs" />
+     <Compile Include="Assets\Scripts\WavePlan.cs" />
      <Compile Include="Assets\Scripts\EnemyPrefab.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\FollowGamePath.cs" />

@@ -358,6 +358,7 @@
 "Assets/Scripts/HealthBarSlider.cs"
 "Assets/Scripts/ScoreDisplay.cs"
 "Assets/Scripts/Tower.cs"
+"Assets/Scripts/WavePlan.cs"
 -langversion:9.0
 
 /deterministic

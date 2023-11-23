@@ -29,8 +29,6 @@ public class HealthBarSlider : MonoBehaviour
     }
     void Start()
     {
-        Image background = slider.AddComponent<Image>();
-        background.color = Color.Lerp(Color.red, Color.green, slider.value / slider.maxValue);
     }
     void Update()
     {

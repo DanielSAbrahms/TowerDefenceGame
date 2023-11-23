@@ -1,16 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class EnemyPrefab : MonoBehaviour
 {
     public List<Transform> waypoints = new List<Transform>();
-    public float speed;
-    public int currentWaypointIndex = 0;
+    public float speed = 5f;
 
-    public float MaxHealth = 100f;
-
-    public float health = 100f;
+    public float maxHealth = 100f;
+    public float health;
 
     public float Health
     {
@@ -31,13 +30,13 @@ public class EnemyPrefab : MonoBehaviour
 
     private new Renderer renderer;
 
-    public void Initialize(List<Transform> waypointsParam, float speedParam, int currentWaypointIndexParam, float maxHealthParam)
+    private float hitAnimationTimer = 0f;
+    public float hitAnimationTimerDuration = 0.1f;
+
+    public void Initialize(List<Transform> waypointsParam)
     {
         waypoints = waypointsParam;
-        speed = speedParam;
-        currentWaypointIndex = currentWaypointIndexParam;
-        MaxHealth = maxHealthParam;
-        Health = maxHealthParam;
+        Health = health = maxHealth;
     }
 
     void Start() {
@@ -45,10 +44,25 @@ public class EnemyPrefab : MonoBehaviour
         followGamePath.Initialize(speed);
 
         healthBarSlider = gameObject.AddComponent<HealthBarSlider>();
-        healthBarSlider.Initialize(gameObject.transform, health, 0, MaxHealth);
+        healthBarSlider.Initialize(gameObject.transform, health, 0, maxHealth);
 
         renderer = GetComponent<Renderer>();
         renderer.material.color = Color.white;
+    }
+
+    void Update()
+    {
+        if (hitAnimationTimer > 0)
+        {
+            renderer.material.color = new Color(1f, 0.8f, 0.8f, 1f);
+
+            hitAnimationTimer -= Time.deltaTime;
+        }
+        else
+        {
+            hitAnimationTimer = 0f;
+            renderer.material.color = Color.white;
+        }
     }
 
     public void BeTargeted(Tower tower) {
@@ -57,6 +71,8 @@ public class EnemyPrefab : MonoBehaviour
 
     public void TakeDamage(float damageTaken) {
         Health -= damageTaken;
+
+        hitAnimationTimer = hitAnimationTimerDuration;
 
         if (Health <= 0) Die();
     }

@@ -779,6 +779,7 @@ GameObject:
   m_Component:
   - component: {fileID: 942909784}
   - component: {fileID: 942909785}
+  - component: {fileID: 942909786}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -820,14 +821,20 @@ MonoBehaviour:
   - {fileID: 1684938669}
   - {fileID: 2004475114}
   - {fileID: 1031394697}
-  objectPrefab: {fileID: 191017847882890858, guid: e257fd9b116b2d44da61c575157d8b5e, type: 3}
-  spawnPoint: {fileID: 1755425953}
-  spawnInterval: 6
-  totalMaxHealth: 200
-  totalMinHealth: 50
-  baseEnemySpeed: 5
-  enemySpeedScale: 2
-  enemySizeScale: 2
+  spawnInterval: 2
+--- !u!114 &942909786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 942909783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0e4da9f7abb614458539f30eef06af5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemiesInWaves: 00000000010000000000000001000000000000000100000000000000010000000100000002000000
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,7 +894,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 70
+  field of view: 23
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -914,7 +921,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.39823213, y: 0.0013802997, z: 0.011433197, w: 0.91721237}
-  m_LocalPosition: {x: 2, y: 17.39, z: -22.76}
+  m_LocalPosition: {x: 1.43, y: 51.09, z: -51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
