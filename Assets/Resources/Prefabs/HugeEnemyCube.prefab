@@ -295,8 +295,8 @@ Transform:
   m_GameObject: {fileID: 3570348899389230838}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -26.23902, y: 1.83, z: -23.888857}
-  m_LocalScale: {x: 1.6565909, y: 1.6565909, z: 1.6565909}
+  m_LocalPosition: {x: -26.23902, y: 1.1582, z: -23.888857}
+  m_LocalScale: {x: 2.277481, y: 2.277481, z: 2.277481}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7079666283591502908}
@@ -389,6 +389,8 @@ MonoBehaviour:
   speed: 1
   maxHealth: 300
   health: 300
+  reward: 100
+  penalty: 25
   hitAnimationTimerDuration: 0.05
 --- !u!1 &4254607806371968745
 GameObject:

@@ -28,7 +28,8 @@ public class HealthBarSlider : MonoBehaviour
         target = gameObject.transform;
     }
     void Start()
-    {
+    { 
+        
     }
     void Update()
     {

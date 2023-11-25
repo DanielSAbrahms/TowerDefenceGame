@@ -120,9 +120,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  speed: 5
+  speed: 3.5
   maxHealth: 100
   health: 100
+  reward: 25
+  penalty: 10
+  hitAnimationTimerDuration: 0.1
 --- !u!1 &566954822372408584
 GameObject:
   m_ObjectHideFlags: 0

@@ -229,8 +229,8 @@ Transform:
   m_GameObject: {fileID: 5659096619907520452}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.557014, y: 0.33, z: -26.38457}
-  m_LocalScale: {x: 0.74025136, y: 0.6229128, z: 1.4066}
+  m_LocalPosition: {x: -24.557014, y: 0.193, z: -26.38457}
+  m_LocalScale: {x: 0.509937, y: 0.42910597, z: 0.9689646}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3098584778357302236}
@@ -320,9 +320,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  speed: 10
+  speed: 7
   maxHealth: 25
   health: 25
+  reward: 10
+  penalty: 5
   hitAnimationTimerDuration: 0.2
 --- !u!1 &6953297224395233810
 GameObject:

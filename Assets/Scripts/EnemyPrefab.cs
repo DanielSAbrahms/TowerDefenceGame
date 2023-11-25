@@ -11,6 +11,9 @@ public class EnemyPrefab : MonoBehaviour
     public float maxHealth = 100f;
     public float health;
 
+    public int reward;
+    public int penalty;
+
     public float Health
     {
         get { return health; }

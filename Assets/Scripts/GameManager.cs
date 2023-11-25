@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using GameObject = UnityEngine.GameObject;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,9 +14,18 @@ public class GameManager : MonoBehaviour
 
     private const float EnemyDeathDuration = 0.3f;
 
+    private GameOverDisplay gameOverDisplay;
+    private HealthDisplay healthDisplay;
+    private MoneyDisplay moneyDisplay;
+
     private int currentWave = 0;
-    private int currentEnemyInWave = 0;
+    private int currentEnemyInWaveIndex;
     private List<int> enemiesForCurrentWave;
+
+    private bool isGamePlaying = true;
+    
+    public int playerStarterHealth;
+    public int playerStarterMoney;
 
     private int playerHealth;
     public int PlayerHealth
@@ -26,12 +34,27 @@ public class GameManager : MonoBehaviour
         set
         {
             playerHealth = value;
-            OnScoreChanged?.Invoke(playerHealth);
+            OnHealthChanged?.Invoke(playerHealth);
+        }
+    }
+    
+    private int playerMoney;
+    public int PlayerMoney
+    {
+        get { return playerMoney; }
+        set
+        {
+            playerMoney = value;
+            OnMoneyChanged?.Invoke(playerMoney);
         }
     }
 
-    public delegate void ScoreChanged(int newScore);
-    public event ScoreChanged OnScoreChanged;
+    public delegate void HealthChanged(int newHealth);
+    public event HealthChanged OnHealthChanged;
+    
+    public delegate void MoneyChanged(int newAmount);
+    public event MoneyChanged OnMoneyChanged;
+    
     public float spawnInterval = 2f;
 
     private float timeSinceLastSpawn;
@@ -42,7 +65,6 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            Instance.PlayerHealth = 100;
         }
         else
         {
@@ -55,46 +77,66 @@ public class GameManager : MonoBehaviour
     {
         WavePlan wavePlan = gameObject.GetComponent<WavePlan>();
         enemiesForCurrentWave = wavePlan.GetEnemiesInWave(currentWave);
+
+        gameOverDisplay = GameObject.Find("GameOverDisplay").GetComponent<GameOverDisplay>();
+        gameOverDisplay.gameObject.SetActive(false);
+        
+        healthDisplay = GameObject.Find("HealthDisplay").GetComponent<HealthDisplay>();
+        healthDisplay.gameObject.SetActive(true);
+        
+        moneyDisplay = GameObject.Find("MoneyDisplay").GetComponent<MoneyDisplay>();
+        moneyDisplay.gameObject.SetActive(true);
+        
+        Instance.PlayerHealth = playerStarterHealth;
+        Instance.PlayerMoney = playerStarterMoney;
     }
 
     private void Update()
     {
         timeSinceLastSpawn += Time.deltaTime;
 
-        if (timeSinceLastSpawn >= spawnInterval)
+        if (isGamePlaying)
         {
-            switch (currentEnemyInWave)
+            if (timeSinceLastSpawn >= spawnInterval)
             {
-                case 0:
-                    SpawnObject(Resources.Load<GameObject>("Prefabs/EnemyCube"));
-                    break;
-                case 1:
-                    SpawnObject(Resources.Load<GameObject>("Prefabs/SmallEnemyCube"));
-                    break;
-                case 2:
-                    SpawnObject(Resources.Load<GameObject>("Prefabs/HugeEnemyCube"));
-                    break;
-                default:
-                    currentEnemyInWave += 1;
-                    break;
+                if (currentEnemyInWaveIndex >= enemiesForCurrentWave.Count)
+                {
+                    EndWave();
+                }
+                else
+                {
+                    switch (enemiesForCurrentWave[currentEnemyInWaveIndex])
+                    {
+                        case 0:
+                            SpawnObject(Resources.Load<GameObject>("Prefabs/EnemyCube"));
+                            break;
+                        case 1:
+                            SpawnObject(Resources.Load<GameObject>("Prefabs/SmallEnemyCube"));
+                            break;
+                        case 2:
+                            SpawnObject(Resources.Load<GameObject>("Prefabs/HugeEnemyCube"));
+                            break;
+                    }
+
+                    currentEnemyInWaveIndex += 1;
+                    timeSinceLastSpawn = 0;
+                }
             }
 
 
-            timeSinceLastSpawn = 0;
-        }
+            Dictionary<GameObject, float> dyingEnemiesCopy = dyingEnemies;
+            dyingEnemies = new Dictionary<GameObject, float>();
 
-        Dictionary<GameObject, float> dyingEnemiesCopy = dyingEnemies;
-        dyingEnemies = new Dictionary<GameObject, float>();
-        
-        foreach (KeyValuePair<GameObject, float> enemy in dyingEnemiesCopy)
-        {
-            GameObject enemyObject = enemy.Key;
-            float timeLeft = enemy.Value;
+            foreach (KeyValuePair<GameObject, float> enemy in dyingEnemiesCopy)
+            {
+                GameObject enemyObject = enemy.Key;
+                float timeLeft = enemy.Value;
 
-            timeLeft -= Time.deltaTime;
+                timeLeft -= Time.deltaTime;
 
-            if (timeLeft <= 0) DestroyEnemy(enemyObject);
-            else dyingEnemies.Add(enemyObject, timeLeft);
+                if (timeLeft <= 0) DestroyEnemy(enemyObject);
+                else dyingEnemies.Add(enemyObject, timeLeft);
+            }
         }
     }
 
@@ -127,25 +169,52 @@ public class GameManager : MonoBehaviour
     public void EnemyCompletePath(GameObject enemy) {
         enemies.Remove(enemy);
         Destroy(enemy);
-        Instance.PlayerHealth -= 10;
+        Instance.PlayerHealth -= enemy.GetComponent<EnemyPrefab>().penalty;
+
+        if (Instance.PlayerHealth <= 0)
+        {
+            GameOver();
+        }
     }
 
     public List<GameObject> GetAllEnemies() {
         return enemies;
     }
 
+    // Killing an enemy stops them, but allows a small period of animation
+    // Prevents enemies disappearing instantly upon taking enough damage
     public void KillEnemy(GameObject enemy)
     {
         dyingEnemies.Add(enemy, EnemyDeathDuration);
-
+        playerMoney += enemy.GetComponent<EnemyPrefab>().reward;
         FollowGamePath followGamePath = enemy.GetComponent<FollowGamePath>();
         Destroy(followGamePath);
     }
     
+    // Destroying an enemy removes them from the game entirely
     public void DestroyEnemy(GameObject enemy)
     {
         dyingEnemies.Remove(enemy);
         enemies.Remove(enemy);
         Destroy(enemy);
+    }
+
+    public void GameOver()
+    {
+        foreach (GameObject enemy in enemies)
+        {
+            Destroy(enemy);
+        }
+
+        isGamePlaying = false;
+
+        healthDisplay.gameObject.SetActive(false);
+        gameOverDisplay.gameObject.SetActive(true);
+    }
+
+    private void EndWave()
+    {
+        // TODO Add multiple Wave logic
+        isGamePlaying = false;
     }
 }
