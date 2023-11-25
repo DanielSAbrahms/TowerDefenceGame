@@ -87,8 +87,10 @@ public class GameManager : MonoBehaviour
         moneyDisplay = GameObject.Find("MoneyDisplay").GetComponent<MoneyDisplay>();
         moneyDisplay.gameObject.SetActive(true);
         
-        Instance.PlayerHealth = playerStarterHealth;
-        Instance.PlayerMoney = playerStarterMoney;
+        PlayerHealth = playerStarterHealth;
+        healthDisplay.UpdateHealthDisplay(PlayerHealth);
+        PlayerMoney = playerStarterMoney;
+        moneyDisplay.UpdateMoneyDisplay(PlayerMoney);
     }
 
     private void Update()

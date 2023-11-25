@@ -6,11 +6,13 @@ public class HealthDisplay : MonoBehaviour
 {
     private TextMeshProUGUI scoreText;
 
+    private void Awake() {
+        scoreText = GetComponent<TextMeshProUGUI>();
+        gameObject.SetActive(true);
+    }
     private void Start()
     {
-        scoreText = GetComponent<TextMeshProUGUI>();
         GameManager.Instance.OnHealthChanged += UpdateHealthDisplay;
-        gameObject.SetActive(true);
     }
 
     private void OnDestroy()
