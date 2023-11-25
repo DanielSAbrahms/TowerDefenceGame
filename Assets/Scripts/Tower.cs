@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Tower : MonoBehaviour
@@ -58,17 +59,24 @@ public class Tower : MonoBehaviour
         if (enemies.Count <= 0) return null;
 
         GameObject closestEnemy = enemies[0];
-        float closestEnemyDistance = Vector3.Distance(gameObject.transform.position, closestEnemy.transform.position);
+        if (!closestEnemy.IsDestroyed())
+        {
+            float closestEnemyDistance = Vector3.Distance(gameObject.transform.position, closestEnemy.transform.position);
 
-        foreach(GameObject enemy in enemies) {
-            float distanceToTower = Vector3.Distance(gameObject.transform.position, enemy.transform.position);
-            if (distanceToTower < closestEnemyDistance) {
-                closestEnemy = enemy;
-                closestEnemyDistance = distanceToTower;
+            foreach(GameObject enemy in enemies) {
+                if (!enemy.IsDestroyed())
+                {
+                    float distanceToTower = Vector3.Distance(gameObject.transform.position, enemy.transform.position);
+                    if (distanceToTower < closestEnemyDistance) {
+                        closestEnemy = enemy;
+                        closestEnemyDistance = distanceToTower;
+                    }
+                }
             }
+            return closestEnemy;
         }
 
-        return closestEnemy;
+        return null;
     }
 
     void TargetEnemy(EnemyPrefab enemyPrefab) {
