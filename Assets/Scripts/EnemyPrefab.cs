@@ -1,11 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class EnemyPrefab : MonoBehaviour
 {
-    public List<Transform> waypoints = new List<Transform>();
+    public delegate void HealthChanged(float newHealth);
+
+    public List<Transform> waypoints = new();
     public float speed = 5f;
 
     public float maxHealth = 100f;
@@ -13,10 +14,19 @@ public class EnemyPrefab : MonoBehaviour
 
     public int reward;
     public int penalty;
+    public float hitAnimationTimerDuration = 0.1f;
+
+    private FollowGamePath followGamePath;
+
+    private HealthBarSlider healthBarSlider;
+
+    private float hitAnimationTimer;
+
+    private new Renderer renderer;
 
     public float Health
     {
-        get { return health; }
+        get => health;
         set
         {
             health = value;
@@ -24,25 +34,8 @@ public class EnemyPrefab : MonoBehaviour
         }
     }
 
-    private HealthBarSlider healthBarSlider;
-
-    public delegate void HealthChanged(float newHealth);
-    public event HealthChanged OnHealthChanged;
-
-    private FollowGamePath followGamePath;
-
-    private new Renderer renderer;
-
-    private float hitAnimationTimer = 0f;
-    public float hitAnimationTimerDuration = 0.1f;
-
-    public void Initialize(List<Transform> waypointsParam)
+    private void Start()
     {
-        waypoints = waypointsParam;
-        Health = health = maxHealth;
-    }
-
-    void Start() {
         followGamePath = gameObject.GetComponent<FollowGamePath>();
         followGamePath.Initialize(speed);
 
@@ -53,7 +46,7 @@ public class EnemyPrefab : MonoBehaviour
         renderer.material.color = Color.white;
     }
 
-    void Update()
+    private void Update()
     {
         if (hitAnimationTimer > 0)
         {
@@ -68,11 +61,20 @@ public class EnemyPrefab : MonoBehaviour
         }
     }
 
-    public void BeTargeted(Tower tower) {
-        
+    public event HealthChanged OnHealthChanged;
+
+    public void Initialize(List<Transform> waypointsParam)
+    {
+        waypoints = waypointsParam;
+        Health = health = maxHealth;
     }
 
-    public void TakeDamage(float damageTaken) {
+    public void BeTargeted(Tower tower)
+    {
+    }
+
+    public void TakeDamage(float damageTaken)
+    {
         Health -= damageTaken;
 
         hitAnimationTimer = hitAnimationTimerDuration;
@@ -82,7 +84,12 @@ public class EnemyPrefab : MonoBehaviour
 
     public void Die()
     {
-        GameManager.Instance.KillEnemy(gameObject);
+        GameManager.Instance.DestroyEnemy(gameObject);
     }
-    
+
+    public float GetDistanceTraveled()
+    {
+        if (followGamePath.IsUnityNull()) return -1f;
+        return followGamePath.CalculateTraveledDistance();
+    }
 }

@@ -1,14 +1,18 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System;
 using TMPro;
+using UnityEngine;
 
 public class MoneyDisplay : MonoBehaviour
 {
     private TextMeshProUGUI moneyText;
 
-    private void Start()
+    private void Awake()
     {
         moneyText = GetComponent<TextMeshProUGUI>();
+    }
+
+    private void Start()
+    {
         GameManager.Instance.OnMoneyChanged += UpdateMoneyDisplay;
         gameObject.SetActive(true);
     }
@@ -20,6 +24,6 @@ public class MoneyDisplay : MonoBehaviour
 
     public void UpdateMoneyDisplay(int newAmount)
     {
-        moneyText.text = "Money: $" + newAmount.ToString();
+        moneyText.text = "Money: $" + newAmount;
     }
 }

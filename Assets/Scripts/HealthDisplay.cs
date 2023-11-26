@@ -1,15 +1,16 @@
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 
 public class HealthDisplay : MonoBehaviour
 {
     private TextMeshProUGUI scoreText;
 
-    private void Awake() {
+    private void Awake()
+    {
         scoreText = GetComponent<TextMeshProUGUI>();
         gameObject.SetActive(true);
     }
+
     private void Start()
     {
         GameManager.Instance.OnHealthChanged += UpdateHealthDisplay;
@@ -22,6 +23,6 @@ public class HealthDisplay : MonoBehaviour
 
     public void UpdateHealthDisplay(int newScore)
     {
-        scoreText.text = "Health: " + newScore.ToString();
+        scoreText.text = "Health: " + newScore;
     }
 }
